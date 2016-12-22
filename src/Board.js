@@ -163,7 +163,7 @@
       var allRows = this.rows();
       var counter = 0;
       var colInd = majorDiagonalColumnIndexAtFirstRow;
-      for (var i = 0; i < (allRows.length - colInd > 4 ? 4 : allRows.length - colInd); i++) {
+      for (var i = 0; i < (allRows.length - colInd > this.rows().length ? this.rows().length : allRows.length - colInd); i++) {
         if (allRows[i][colInd + i] === undefined) {
           continue;
         }
@@ -200,7 +200,7 @@
       var counter = 0;
       var colInd = minorDiagonalColumnIndexAtFirstRow;
 
-      for (var i = 0; i < (colInd > 2 ? 4 : colInd + 1); i++) {
+      for (var i = 0; i < (colInd > this.rows().length / 2 ? this.rows().length : colInd + 1); i++) {
         if (allRows[i][colInd - i] === undefined) {
           continue;
         }
