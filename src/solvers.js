@@ -42,28 +42,63 @@ window.countNRooksSolutions = function(n) {
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
   var solution = new Board({n: n});
-  // var counter = 0;
-  // var currentRow = 0;
-  // var currentCol = 0;
+  var counter = 0;
+  var currentRow = 0;
+  var currentCol = 0;
+
   if (n === 0) {
     return solution.rows();
   } else if (n === 1) {
     solution.rows()[0][0] = 1;
     return solution.rows();
   } else if (n === 2 || n === 3) {
-    console.log('test 2 && 3: pass');
     return solution.rows();
-
-  } else if (n === 4) {
+  } else /*if (n % 2 === 0)*/ {
     // n == even
 
-    // just to get passed tests
-    solution.rows()[0][1] = 1;
-    solution.rows()[1][3] = 1;
-    solution.rows()[2][0] = 1;
-    solution.rows()[3][2] = 1;
-    return solution.rows();
-  } else if (n % 2 === 1) {
+
+    var recurse = function () {
+      solution = new Board({n: n});
+      counter = 0;
+      solution.rows()[currentRow][currentCol]++;
+      counter++;
+
+      for (var i = 0; i < n; i++) {
+        for (var j = 0; j < n; j++) {
+
+          if (i === currentRow && j === currentCol) {
+            continue;
+            // counter++;
+          }
+          solution.rows()[i][j]++;
+          if (solution.hasAnyQueensConflicts()) {
+            solution.rows()[i][j]--;
+          } else {
+            counter++;
+          }
+        }
+      }
+      if (counter === n ) {
+        return solution.rows();
+      }
+
+      if (counter < n) {
+        currentCol++;
+        if (currentCol === n) {
+          currentCol = 0;
+          currentRow++;
+        }
+        recurse();
+      }
+      
+    };
+
+    // call recursive function
+    recurse();
+  } 
+  // will only work on odd and not divivisble by 3 
+  // will speed up the program for those tests
+  /*else if (n % 2 === 1) {
     console.log(n);
     // n = odd
     // start at [0,1] for odd n's
@@ -86,51 +121,101 @@ window.findNQueensSolution = function(n) {
       solution.rows()[startRow][startCol] = 1;
     }
     console.log(solution.rows());
-  }
-  // var recurse = function () {
-  //   solution = new Board({n: n});
-    
-  //   counter = 0;
-  //   //set the starting queen
-  //   solution.rows()[currentRow][currentRow]++;
+  }*/
 
-  //   // place all queens
-  //   for (var i = 0; i < solution.rows().length; i++) {
-  //     for (var j = 0; i < solution.rows().length; j++) {
-  //       solution.rows()[i][j]++;
-  //       if (solution.hasAnyQueensConflicts() {
-  //         solution.rows()[i][j]--;
-  //       } else {
-  //         counter++;
-  //       }
-  //     }
-  //   }
-  //   // check if n queens have been placed
-  //   if (counter < n) {
-  //     // solution = new Board({n: n});
-  //     // counter = 0;
-  //     currentCol++;
-  //     if (currentCol === n - 1) {
-  //       currentRow++;
-  //       currentCol = 0;
-  //     }
-  //     return recurse();
-  //   } else if (counter === n ) {
-  //     return solution.rows();
-  //   }
-  // };
-
-  // //solution = recurse(currentRow, currentCol);
-
-  // recurse();
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  
+
   return solution.rows();
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+
+  var solution = new Board({n: n});
+  var counter = 0;
+  var startingRow = 0;
+  var startingCol = 0;
+  var currentRow = 0;
+  var currentCol = 0;
+  var solutionCounter = 0;
+
+  if (n === 0) {
+    return 1;
+  } else if (n === 1) {
+    return 1;
+    return solution.rows();
+  } else if (n === 2 || n === 3) {
+    return 0;
+  } else /*if (n % 2 === 0)*/ {
+    // n == even
+
+
+    var recurse = function () {
+      // console.log(n);
+      solution = new Board({n: n});
+      counter = 0;
+      currentRow = startingRow;
+      currentCol = startingCol;
+      console.log('current R: ' + currentRow);
+      console.log('current C: ' + currentCol);
+      solution.rows()[currentRow][currentCol]++;
+      counter++;
+
+      for (var i = 0; i < n; i++) {
+        for (var j = 0; j < n; j++) {
+
+          if (i === currentRow && j === currentCol) {
+            continue;
+            // counter++;
+          }
+          solution.rows()[i][j]++;
+          if (solution.hasAnyQueensConflicts()) {
+            solution.rows()[i][j]--;
+          } else {
+            counter++;
+          }
+        }
+      }
+
+      console.log(solution.rows());
+      if (counter === n) {
+        solutionCounter++;
+        console.log('solution counter: ' + solutionCounter);
+
+
+
+        // if solution is found, add to counter, 
+        // reset state of the board, have new starting position, continue
+      }
+
+      if (currentCol < n && currentRow < n - 1 || counter < n) {
+        // currentCol = 0;
+        // currentRow = 0;
+        startingCol++;
+        if (startingCol === n) {
+          startingCol = 0;
+          startingRow++;
+        }
+        recurse();
+      } /*else if (counter < n) {
+        startingCol++;
+        if (currentCol === n) {
+          startingCol = 0;
+          startingRow++;
+        }
+        recurse();
+      }*/
+      
+    };
+
+
+
+
+
+    // call recursive function
+    recurse();
+  } 
+  console.log('Number of solutions for ' + n + ' queens:', solutionCounter);
+  return solutionCounter;
 };
